@@ -22,7 +22,7 @@ hook.Add('chat_command', 'kick', function (player, cmd, _, target, kick_msg)
 	if not nBAM:IsString(target) then return end
 	
 	local targets = Player.Match(target)
-	if #targets == 0 then
+	if #targets <= 0 then
 		nBAM:PPrint(player, nBAM.Color.red, "No player found!")
 		return
 	elseif #targets > 1 then
