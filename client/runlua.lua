@@ -41,7 +41,11 @@ end
 
 Network:Subscribe("nBAM_runlua", function (script)
 	script = load(script)
+	
+	easylua.Start(LocalPlayer)
 	local ok, err = pcall(script)
+	easylua.End()
+	
 	if not ok then
 		cprint(err)
 	end
