@@ -22,7 +22,16 @@ hook.Add('chat_command', 'chat_kick', function (player, cmd, _, target, kick_msg
 	if not nBAM:IsString(target) then return end
 	
 	local targets = Player.Match(target)
-	if #targets ~= 1 then nBAM:CPrint("YOU DUN GOOFED!") return end
+	if #targets == 0 then
+		nBAM:PPrint(player, nBAM.Color.red, "No player found!")
+		return
+	elseif #targets > 1 then
+		nBAM:PPrint(player, nBAM.Color.red, "Multiple players found:")
+		for _, ply in next, targets do
+			nBAM:PPrint(player, nBAM.Color.lred, " - " .. ply:GetName())
+		end
+		return
+	end
 	
 	if not nBAM:IsString(kick_msg) or string.len(kick_msg) < 3 then
 		kick_msg = 'Kicked by Admin'
