@@ -14,26 +14,25 @@
   limitations under the License.
 ]]--
 
-local hook = require 'nbamHook'
+easylua   = {}
+easylua.o = {}
 
-hook.Add('chat_command', 'lua_sv', function (player, cmd, script)
-	if cmd ~= "l" then return end
-	if not nBAM:HasPermission(player, 'lua') then return end
-	
-	script = load(script)
-	
-	easylua.Start(player)
-	local ok, err = pcall(script)
-	easylua.End()
-	
-	if not ok then
-		cprint(err)
+local shortcuts = {
+	me = function(ply) return ply end,
+	there = function(ply) return ply:GetAimTarget().position end,
+	this = function(ply) return ply:GetAimTarget().player or ply:GetAimTarget().vehicle end
+}
+
+function easylua.Start(ply)
+	for k, v in next, shortcuts do
+		easylua.o[k] = _G[k]
+		_G[k] = v(ply)
 	end
-end)
+end
 
-hook.Add('chat_command', 'lua_cl', function (player, cmd, script)
-	if cmd ~= "lc" then return end
-	if not nBAM:HasPermission(player, 'lua') then return end
-
-	Network:Broadcast("nBAM_runlua", script)
-end)
+function easylua.End()
+	for k, v in next, easylua.o do
+		_G[k] = v
+		easylua.o[k] = nil
+	end
+end
