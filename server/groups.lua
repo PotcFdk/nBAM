@@ -16,40 +16,40 @@
 
 local hook = require 'nbamHook'
 
-local fn		 = 'admins.txt'
-local fn_default = 'admins.default.txt'
+local fn		 = 'groups.txt'
+local fn_default = 'groups.default.txt'
 
-hook.Add('preinit', 'admins', function ()
-	function nBAM:IsAdmin (player)
+hook.Add('preinit', 'groups', function ()
+	function nBAM:GetGroup (player)
 		if self:IsPlayer(player) then
 			player = player:GetSteamId()
 		elseif self:IsString(player) then
 			player = SteamId(player)
 		end
 		assert(self:IsSteamId(player), 'Parameter #1 is not a Player entity or a SteamId!')
-		return self.admins[tostring(player)]
+		return self.groups[tostring(player)]
 	end
 end)
 
-hook.Add('postinit', 'admins', function (self)
-	self.admins = {}
+hook.Add('postinit', 'groups', function (self)
+	self.groups = {}
 	
 	local fh = io.open(fn, 'r')
 
 	if not fh then
-		nBAM:Log('admins', string.format("Could not find '%s', loading default admin file...", fn))
+		nBAM:Log('groups', string.format("Could not find '%s', loading default group file...", fn))
 		fh = io.open(fn_default, 'r')
 		if not fh then
-			nBAM:Log('admins', 'Error: Could not open admin lists!')
+			nBAM:Log('groups', 'Error: Could not open group lists!')
 			return
 		end
 	end
 	
 	for ln in fh:lines() do
-		ln = string.match(ln, "^STEAM_%d:%d:%d+")
-		if ln then
-			self.admins[ln] = true
-			self:Log('admins', 'Added admin: ' .. ln)
+		steam_id, group = string.match(ln, "^(STEAM_%d:%d:%d+)%s*|%s*([^ ]+)")
+		if steam_id and group then
+			self.groups[steam_id] = group
+			self:Log('groups', "Added user '%s' to group '%s'.", steam_id, group)
 		end
 	end
 	
