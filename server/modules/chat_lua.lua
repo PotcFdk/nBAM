@@ -16,7 +16,7 @@
 
 local hook = require 'nbamHook'
 
-hook.Add('chat_command', 'chat_lua_sv', function (player, cmd, script)
+hook.Add('chat_command', 'lua_sv', function (player, cmd, script)
 	if cmd ~= "l" then return end
 	if not nBAM:IsAdmin(player) then return end
 
@@ -27,7 +27,7 @@ hook.Add('chat_command', 'chat_lua_sv', function (player, cmd, script)
 	end
 end)
 
-hook.Add('chat_command', 'chat_lua_cl', function (player, cmd, script)
+hook.Add('chat_command', 'lua_cl', function (player, cmd, script)
 	if cmd ~= "lc" then return end
 	if not nBAM:IsAdmin(player) then return end
 
