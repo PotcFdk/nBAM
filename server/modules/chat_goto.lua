@@ -18,6 +18,7 @@ local hook = require 'nbamHook'
 
 hook.Add('chat_command', 'goto', function (player, cmd, _, target)
 	if cmd ~= "goto" then return end
+	if not nBAM:HasPermission(player, 'goto')
 	if not nBAM:IsString(target) then return end
 	
 	local targets = Player.Match(target)

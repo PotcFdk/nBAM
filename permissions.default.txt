@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "owner": [
+      "bring",
+      "goto",
+      "kick",
+      "kill",
+      "lua"
+    ],
+    "admin": [
+      "bring",
+      "goto",
+      "kick",
+      "kill"
+    ],
+    "player": [
+      "goto"
+    ]
+  }
+}

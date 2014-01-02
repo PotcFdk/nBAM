@@ -18,7 +18,7 @@ local hook = require 'nbamHook'
 
 hook.Add('chat_command', 'kill', function (player, cmd, _, target)
 	if cmd ~= "kill" then return end
-	if not nBAM:IsAdmin(player) then return end
+	if not nBAM:HasPermission(player, 'kill') then return end
 	
 	local targets = Player.Match(target)
 	if #targets <= 0 then

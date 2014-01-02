@@ -18,7 +18,7 @@ local hook = require 'nbamHook'
 
 hook.Add('chat_command', 'kick', function (player, cmd, _, target, kick_msg)
 	if cmd ~= "kick" then return end
-	if not nBAM:IsAdmin(player) then return end
+	if not nBAM:HasPermission(player, 'kick') then return end
 	if not nBAM:IsString(target) then return end
 	
 	local targets = Player.Match(target)
