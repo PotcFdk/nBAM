@@ -46,8 +46,11 @@ hook.Add('postinit', 'admins', function (self)
 	end
 	
 	for ln in fh:lines() do
-		self.admins[ln] = true
-		self:Log('admins', 'Added admin: ' .. ln)
+		ln = string.match(ln, "^STEAM_%d:%d:%d+")
+		if ln then
+			self.admins[ln] = true
+			self:Log('admins', 'Added admin: ' .. ln)
+		end
 	end
 	
 	fh:close()
