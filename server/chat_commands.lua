@@ -35,7 +35,7 @@ hook.Add('preinit', 'chat_commands', function()
 			for param in string.gmatch(params_str, "[^,]+") do
 				table.insert(params, param)
 			end
-			return hook.Call('chat_command', player, cmd, unpack(params))
+			return hook.Call('chat_command', player, cmd, params_str, unpack(params))
 		end
 	end
 end)
