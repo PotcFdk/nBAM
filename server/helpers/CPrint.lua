@@ -16,20 +16,27 @@
 
 local hook = require 'nbamHook'
 
-hook.Add('chat_command', 'chat_lua_sv', function (player, cmd, script)
-	if cmd ~= "l" then return end
-	if not nBAM:IsAdmin(player) then return end
-
-	script = load(script)
-	local ok, err = pcall(script)
-	if not ok then
-		cprint(err)
+hook.Add('preinit', 'CPrint', function ()
+	function nBAM:CPrint (c, ...)
+		local color
+		if nBAM:IsColor(c) then
+			color = c
+			c = nil
+		else
+			color = Color(0xFF, 0xFF, 0xFF, 0xFF)
+		end
+		
+		local print_string
+		for _, v in next, {c, ...} do
+			print_string = (print_string or "") .. tostring(v)
+		end
+		
+		if not print_string then print_string = "<Empty Value>" end
+		
+		Chat:Broadcast(print_string, color)
 	end
 end)
 
-hook.Add('chat_command', 'chat_lua_cl', function (player, cmd, script)
-	if cmd ~= "lc" then return end
-	if not nBAM:IsAdmin(player) then return end
-
-	Network:Broadcast("nBAM_runlua", script)
+hook.Add('postinit', 'CPrint', function()
+	cprint = function (...) return nBAM:CPrint(...) end
 end)

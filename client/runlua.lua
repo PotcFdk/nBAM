@@ -34,6 +34,8 @@ cprint = function (c, ...)
 		print_string = (print_string or "") .. tostring(v)
 	end
 	
+	if not print_string then print_string = "<Empty Value>" end
+	
 	Chat:Print(print_string, color)
 end
 
