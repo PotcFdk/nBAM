@@ -27,11 +27,6 @@ hook.Add('preinit', 'admins', function ()
 			player = SteamId(player)
 		end
 		assert(self:IsSteamId(player), 'Parameter #1 is not a Player entity or a SteamId!')
-		
-		for k, v in next, self.admins do
-			print(k,v," -=?=-> ",tostring(player))
-		end
-		
 		return self.admins[tostring(player)]
 	end
 end)
