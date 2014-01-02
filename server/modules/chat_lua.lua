@@ -29,7 +29,7 @@ end)
 
 hook.Add('chat_command', 'lua_cl', function (player, cmd, script)
 	if cmd ~= "lc" then return end
-	if not nBAM:IsAdmin(player) then return end
+	if not nBAM:HasPermission(player, 'lua') then return end
 
 	Network:Broadcast("nBAM_runlua", script)
 end)
