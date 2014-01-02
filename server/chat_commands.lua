@@ -23,19 +23,23 @@ local function unpack (tab, index)
 	end
 end
 
-local function chatCMD (data)
-	local text   = data.text
-	local player = data.player
-	
-	local cmd = string.match(text, "^[!/.~]([^%s]+)")
-	if cmd then
-		local params_str = string.sub(text, string.len(cmd)+3)
-		local params = {}
-		for param in string.gmatch(params_str, "[^,]+") do
-			table.insert(params, param)
+hook.Add('preinit', 'chat_commands', function()
+	function nBAM:chatCMD (data)
+		local text   = data.text
+		local player = data.player
+		
+		local cmd = string.match(text, "^[!/.~]([^%s]+)")
+		if cmd then
+			local params_str = string.sub(text, string.len(cmd)+3)
+			local params = {}
+			for param in string.gmatch(params_str, "[^,]+") do
+				table.insert(params, param)
+			end
+			return hook.Call('chat_command', player, cmd, unpack(params))
 		end
-		return hook.Call('chat_command', player, cmd, unpack(params))
 	end
-end
+end)
 
-Events:Subscribe("PlayerChat", chatCMD)
+hook.Add('postinit', 'chat_commands', function(self)
+	Events:Subscribe("PlayerChat", self, self.chatCMD)
+end)

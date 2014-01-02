@@ -16,14 +16,13 @@
 
 local hook = require 'nbamHook'
 
-class 'nBAM'
-
-function nBAM:__init() end
-
-local function postload ()
-	hook.Run('preinit')
-	nBAM = nBAM()
-	hook.Run('postinit', nBAM)
-end
- 
-Events:Subscribe("ModuleLoad", postload)
+hook.Add('preinit', 'GetBySteamId', function()
+	function nBAM:GetBySteamId (sid)
+		sid = SteamId(tostring(sid))
+		for ply in Server:GetPlayers() do
+			if ply:GetSteamId() == sid then
+				return ply
+			end
+		end
+	end
+end)
