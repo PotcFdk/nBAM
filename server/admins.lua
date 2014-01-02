@@ -21,7 +21,18 @@ local fn_default = 'admins.default.txt'
 
 hook.Add('preinit', 'admins', function ()
 	function nBAM:IsAdmin (player)
-		return self.admins[tostring(player:GetSteamId())]
+		if self:IsPlayer(player) then
+			player = player:GetSteamId()
+		elseif self:IsString(player) then
+			player = SteamId(player)
+		end
+		assert(self:IsSteamId(player), 'Parameter #1 is not a Player entity or a SteamId!')
+		
+		for k, v in next, self.admins do
+			print(k,v," -=?=-> ",tostring(player))
+		end
+		
+		return self.admins[tostring(player)]
 	end
 end)
 
