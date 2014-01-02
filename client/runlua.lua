@@ -14,11 +14,15 @@
   limitations under the License.
 ]]--
 
-local hook = require 'nbamHook'
+local function iscolor (col)
+	return type(col) == 'userdata' and type(col.r) == 'number'
+		and type(col.g) == 'number' and type(col.b) == 'number'
+		and type(col.a) == 'number'
+end
 
 cprint = function (c, ...)
 	local color
-	if nBAM:IsColor(c) then
+	if iscolor(c) then
 		color = c
 		c = nil
 	else
@@ -30,23 +34,13 @@ cprint = function (c, ...)
 		print_string = (print_string or "") .. tostring(v)
 	end
 	
-	Chat:Broadcast(print_string, color)
+	Chat:Print(print_string, color)
 end
 
-hook.Add('chat_command', 'chat_lua_sv', function (player, cmd, script)
-	if cmd ~= "l" then return end
-	if not nBAM:IsAdmin(player) then return end
-
+Network:Subscribe("nBAM_runlua", function (script)
 	script = load(script)
 	local ok, err = pcall(script)
 	if not ok then
 		cprint(err)
 	end
-end)
-
-hook.Add('chat_command', 'chat_lua_cl', function (player, cmd, script)
-	if cmd ~= "lc" then return end
-	if not nBAM:IsAdmin(player) then return end
-
-	Network:Broadcast("nBAM_runlua", script)
 end)
