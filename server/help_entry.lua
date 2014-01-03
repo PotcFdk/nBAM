@@ -17,8 +17,8 @@
 local function sendContent(player)
 	local list = ""
 	
-	for k, v in next, nBAM:GetCMDs() do
-		if nBAM:HasPermission(player, k) then
+	for k, v in next, nBAM:GetChatCMDs() do
+		if nBAM:HasPermission(player, v.permission_id) then
 			list = list .. '\n\n'
 				.. '!' .. k .. '  -  ' .. v.usage .. '\n  '
 				.. v.description
