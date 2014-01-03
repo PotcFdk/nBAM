@@ -14,24 +14,29 @@
   limitations under the License.
 ]]--
 
+local Tag = 'goto'
+local usage = '!goto <player>'
+local description = 'Teleports you to a player.'
+
 local hook = require 'nbamHook'
 
-hook.Add('chat_command', 'goto', function (player, cmd, _, target)
-	if cmd ~= "goto" then return end
-	if not nBAM:HasPermission(player, 'goto')
-	if not nBAM:IsString(target) then return end
-	
-	local targets = Player.Match(target)
-	if #targets <= 0 then
-		nBAM:PPrint(player, nBAM.Color.red, "No player found!")
-		return
-	elseif #targets > 1 then
-		nBAM:PPrint(player, nBAM.Color.red, "Multiple players found!")
-		return
-	elseif targets[1] == player then
-		nBAM:PPrint(player, nBAM.Color.red, "Why would you want to teleport to yourself?")
-		return
-	end
-	
-	player:Teleport(targets[1]:GetPosition(),targets[1]:GetAngle())
+hook.Add('postinit', Tag, function()
+	nBAM:RegisterChatCMD(Tag, usage, description, function (player, cmd, _, target)
+		if not nBAM:HasPermission(player, Tag) then return end
+		if not nBAM:IsString(target) then return end
+		
+		local targets = Player.Match(target)
+		if #targets <= 0 then
+			nBAM:PPrint(player, nBAM.Color.red, "No player found!")
+			return false
+		elseif #targets > 1 then
+			nBAM:PPrint(player, nBAM.Color.red, "Multiple players found!")
+			return false
+		elseif targets[1] == player then
+			nBAM:PPrint(player, nBAM.Color.red, "Why would you want to teleport to yourself?")
+			return false
+		end
+		
+		player:Teleport(targets[1]:GetPosition(),targets[1]:GetAngle())
+	end)
 end)

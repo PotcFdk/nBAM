@@ -14,23 +14,28 @@
   limitations under the License.
 ]]--
 
+local Tag = 'kill'
+local usage = '!kill <player>'
+local description = 'Kills a player.'
+
 local hook = require 'nbamHook'
 
-hook.Add('chat_command', 'kill', function (player, cmd, _, target)
-	if cmd ~= "kill" then return end
-	if not nBAM:HasPermission(player, 'kill') then return end
-	
-	local targets = Player.Match(target)
-	if #targets <= 0 then
-		nBAM:PPrint(player, nBAM.Color.red, "No player found!")
-		return
-	elseif #targets > 1 then
-		nBAM:PPrint(player, nBAM.Color.red, "Multiple players found:")
-		for _, ply in next, targets do
-			nBAM:PPrint(player, nBAM.Color.lred, " - " .. ply:GetName())
+hook.Add('postinit', Tag, function()
+	nBAM:RegisterChatCMD(Tag, usage, description, function (player, cmd, _, target)
+		if not nBAM:HasPermission(player, Tag) then return end
+		
+		local targets = Player.Match(target)
+		if #targets <= 0 then
+			nBAM:PPrint(player, nBAM.Color.red, "No player found!")
+			return
+		elseif #targets > 1 then
+			nBAM:PPrint(player, nBAM.Color.red, "Multiple players found:")
+			for _, ply in next, targets do
+				nBAM:PPrint(player, nBAM.Color.lred, " - " .. ply:GetName())
+			end
+			return
 		end
-		return
-	end
 
-	targets[1]:SetHealth(0)
+		targets[1]:SetHealth(0)
+	end)
 end)

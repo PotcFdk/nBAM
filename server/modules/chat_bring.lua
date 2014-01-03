@@ -14,21 +14,26 @@
   limitations under the License.
 ]]--
 
+local Tag = 'bring'
+local usage = '!bring <player>'
+local description = 'Teleport a player to your aim position.'
+
 local hook = require 'nbamHook'
 
-hook.Add('chat_command', 'bring', function (player, cmd, _, target)
-	if cmd ~= "bring" then return end
-	if not nBAM:HasPermission(player, 'bring') then return end
-	if not nBAM:IsString(target) then return end
-	
-	local targets = Player.Match(target)
-	if #targets <= 0 then
-		nBAM:PPrint(player, nBAM.Color.red, "No player found!")
-		return
-	elseif #targets > 1 then
-		nBAM:PPrint(player, nBAM.Color.red, "Multiple players found!")
-		return
-	end
-	
-	targets[1]:Teleport(player:GetAimTarget().position, -player:GetAngle())
+hook.Add('postinit', Tag, function()
+	nBAM:RegisterChatCMD(Tag, usage, description, function (player, cmd, _, target)
+		if not nBAM:HasPermission(player, Tag) then return end
+		if not nBAM:IsString(target) then return end
+		
+		local targets = Player.Match(target)
+		if #targets <= 0 then
+			nBAM:PPrint(player, nBAM.Color.red, "No player found!")
+			return
+		elseif #targets > 1 then
+			nBAM:PPrint(player, nBAM.Color.red, "Multiple players found!")
+			return
+		end
+		
+		targets[1]:Teleport(player:GetAimTarget().position, -player:GetAngle())
+	end)
 end)
