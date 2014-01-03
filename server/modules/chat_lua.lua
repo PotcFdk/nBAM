@@ -16,6 +16,8 @@
 
 local hook = require 'nbamHook'
 
+-- execute functions
+
 hook.Add('chat_command', 'lua_sv', function (player, cmd, script)
 	if cmd ~= "l" then return end
 	if not nBAM:HasPermission(player, 'lua') then return end
@@ -36,4 +38,28 @@ hook.Add('chat_command', 'lua_cl', function (player, cmd, script)
 	if not nBAM:HasPermission(player, 'lua') then return end
 
 	Network:Broadcast("nBAM_runlua", script)
+end)
+
+hook.Add('chat_command', 'lua_self', function (player, cmd, script)
+	if cmd ~= "lm" then return end
+	if not nBAM:HasPermission(player, 'lua') then return end
+
+	Network:Send(player, "nBAM_runlua", script)
+end)
+
+-- print functions
+
+hook.Add('chat_command', 'lua_print', function (player, cmd, script)
+	if cmd ~= "print" then return end
+	if not nBAM:HasPermission(player, 'lua') then return end
+	
+	script = load('cprint('..script..')')
+	
+	easylua.Start(player)
+	local ok, err = pcall(script)
+	easylua.End()
+	
+	if not ok then
+		cprint(err)
+	end
 end)
