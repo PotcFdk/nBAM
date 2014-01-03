@@ -26,7 +26,7 @@ local shortcuts = {
 }
 
 local META = {
-	__index = function(t, key)
+	__index = function (t, key)
 		if shortcuts[key] then
 			return shortcuts[key](caller)
 		elseif rawget(t, key) ~= nil then
@@ -37,6 +37,10 @@ local META = {
 				return matches[1]
 			end
 		end
+	end,
+	__newindex = function (t, key, val)
+		if shortcuts[key] then return end
+		t[key] = val
 	end
 }
 
