@@ -16,11 +16,20 @@
 
 local hook = require 'nbamHook'
 
+local function existsChild (obj, child)
+	local ok, typ = pcall(function() return type(obj[child]) end)
+	if not ok then return false end
+	if typ == 'nil' then return false end
+	return typ
+end
+
 hook.Add('preinit', 'IsType', function()
 	function nBAM:IsColor (col)
-		return type(col) == 'userdata' and type(col.r) == 'number'
-			and type(col.g) == 'number' and type(col.b) == 'number'
-			and type(col.a) == 'number'
+		return type(col) == 'userdata'
+			and existsChild(col, 'r') == 'number'
+			and existsChild(col, 'g') == 'number'
+			and existsChild(col, 'b') == 'number'
+			and existsChild(col, 'a') == 'number'
 	end
 	
 	function nBAM:IsFunction (func)
@@ -28,11 +37,14 @@ hook.Add('preinit', 'IsType', function()
 	end
 
 	function nBAM:IsPlayer (ply)
-		return type(ply) == 'userdata' and type(ply.GetSteamId) == 'function'
+		return type(ply) == 'userdata'
+			and existsChild(ply, 'GetSteamId') == 'function'
 	end
 	
 	function nBAM:IsSteamId (sid)
-		return type(sid) == 'userdata' and type(sid.string) == 'string' and type(sid.id) == 'string'
+		return type(sid) == 'userdata'
+			and existsChild(sid, 'string') == 'string'
+			and existsChild(sid, 'id') == 'string'
 	end
 	
 	function nBAM:IsString (str)
