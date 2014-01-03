@@ -16,6 +16,8 @@
 
 local hook = require 'nbamHook'
 
+local default_group = 'player'
+
 local fn		 = 'groups.txt'
 local fn_default = 'groups.default.txt'
 
@@ -27,7 +29,7 @@ hook.Add('preinit', 'groups', function ()
 			player = SteamId(player)
 		end
 		assert(self:IsSteamId(player), 'Parameter #1 is not a Player entity or a SteamId!')
-		return self.groups[tostring(player)]
+		return self.groups[tostring(player)] or default_group
 	end
 end)
 
