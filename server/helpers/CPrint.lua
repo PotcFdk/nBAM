@@ -33,7 +33,15 @@ hook.Add('preinit', 'CPrint', function ()
 		
 		if not print_string then print_string = "<Empty Value>" end
 		
-		Chat:Broadcast(print_string, color)
+		local first = true
+		for ln in string.gmatch(print_string, "[^\n]+") do
+			if first then
+				Chat:Broadcast(ln, color)
+				first = false
+			else
+				self:CPrint(color, ln)
+			end
+		end
 	end
 end)
 
