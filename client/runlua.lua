@@ -47,6 +47,6 @@ Network:Subscribe("nBAM_runlua", function (script)
 	easylua.End()
 	
 	if not ok then
-		cprint(err)
+		cprint(Color(255, 190, 190), err)
 	end
 end)

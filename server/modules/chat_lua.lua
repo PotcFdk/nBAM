@@ -29,7 +29,7 @@ hook.Add('chat_command', 'lua_sv', function (player, cmd, script)
 	easylua.End()
 	
 	if not ok then
-		cprint(err)
+		cprint(nBAM.Color.lred, err)
 	end
 end)
 
@@ -60,6 +60,6 @@ hook.Add('chat_command', 'lua_print', function (player, cmd, script)
 	easylua.End()
 	
 	if not ok then
-		cprint(err)
+		cprint(nBAM.Color.lred, err)
 	end
 end)
