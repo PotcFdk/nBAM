@@ -14,30 +14,35 @@
   limitations under the License.
 ]]--
 
+local Tag = 'kick'
+local usage = '!kick <player>[,reason]'
+local description = 'Kicks a player. If a reason is provided, it is used as the kick message.'
+
 local hook = require 'nbamHook'
 
-hook.Add('chat_command', 'kick', function (player, cmd, _, target, kick_msg)
-	if cmd ~= "kick" then return end
-	if not nBAM:HasPermission(player, 'kick') then return end
-	if not nBAM:IsString(target) then return end
-	
-	local targets = Player.Match(target)
-	if #targets <= 0 then
-		nBAM:PPrint(player, nBAM.Color.red, "No player found!")
-		return
-	elseif #targets > 1 then
-		nBAM:PPrint(player, nBAM.Color.red, "Multiple players found:")
-		for _, ply in next, targets do
-			nBAM:PPrint(player, nBAM.Color.lred, " - " .. ply:GetName())
+hook.Add('postinit', Tag, function()
+	nBAM:RegisterChatCMD(Tag, usage, description, function (player, cmd, _, target, kick_msg)
+		if not nBAM:HasPermission(player, Tag) then return end
+		if not nBAM:IsString(target) then return end
+		
+		local targets = Player.Match(target)
+		if #targets <= 0 then
+			nBAM:PPrint(player, nBAM.Color.red, "No player found!")
+			return
+		elseif #targets > 1 then
+			nBAM:PPrint(player, nBAM.Color.red, "Multiple players found:")
+			for _, ply in next, targets do
+				nBAM:PPrint(player, nBAM.Color.lred, " - " .. ply:GetName())
+			end
+			return
 		end
-		return
-	end
-	
-	if not nBAM:IsString(kick_msg) or string.len(kick_msg) < 3 then
-		kick_msg = 'Kicked by Admin'
-	end
-	
-	kick_msg = kick_msg .. string.format('\n\n(Kicked by %s | %s)', player:GetName(), player:GetSteamId())
-	
-	targets[1]:Kick(kick_msg)
+		
+		if not nBAM:IsString(kick_msg) or string.len(kick_msg) < 3 then
+			kick_msg = 'Kicked by Admin'
+		end
+		
+		kick_msg = kick_msg .. string.format('\n\n(Kicked by %s | %s)', player:GetName(), player:GetSteamId())
+		
+		targets[1]:Kick(kick_msg)
+	end)
 end)
