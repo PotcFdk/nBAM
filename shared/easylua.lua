@@ -17,22 +17,36 @@
 easylua   = {}
 easylua.o = {}
 
+local caller
+
 local shortcuts = {
 	me = function(ply) return ply end,
 	there = function(ply) return ply:GetAimTarget().position end,
 	this = function(ply) return ply:GetAimTarget().player or ply:GetAimTarget().vehicle end
 }
 
-function easylua.Start(ply)
-	for k, v in next, shortcuts do
-		easylua.o[k] = _G[k]
-		_G[k] = v(ply)
+local META = {
+	__index = function(t, key)
+		if shortcuts[key] then
+			return shortcuts[key](caller)
+		else
+			return t[key]
+		end
 	end
+}
+
+function easylua.Start(ply)
+	if caller ~= nil then
+		print("[easylua] !! RESTARTING INCOMPLETE SESSION FOR ",ply)
+		easylua.End()
+	end
+	
+	caller = ply
+	easylua.o = _G
+	_G = setmetatable(_G, META)
 end
 
 function easylua.End()
-	for k, v in next, easylua.o do
-		_G[k] = v
-		easylua.o[k] = nil
-	end
+	_G = easylua.o
+	caller = nil
 end
