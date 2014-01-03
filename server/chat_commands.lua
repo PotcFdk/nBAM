@@ -23,7 +23,28 @@ local function unpack (tab, index)
 	end
 end
 
+local function errmsg (paramNum, expectedType)
+	return string.format('Parameter #%d expected to be %s!', paramNum, expectedType)
+end
+
 hook.Add('preinit', 'chat_commands', function()
+	function nBAM:RegisterChatCMDInfo (command, usage, description)
+		assert(self:IsString(command), errmsg(1, 'string'))
+		assert(self:IsString(usage), errmsg(2, 'string'))
+		assert(self:IsString(description), errmsg(3, 'string'))
+		self.commandInfo[command] = {usage = usage, description = description}
+	end
+	
+	function nBAM:GetCMDs ()
+		return self.commandInfo
+	end
+	
+	function nBAM:GetCMDInfo (command)
+		assert(self:IsString(command), errmsg(1, 'string'))
+		if not self.commandInfo[command] then return end
+		return self.commandInfo[command].usage, self.commandInfo[command].description
+	end
+	
 	function nBAM:chatCMD (data)
 		local text   = data.text
 		local player = data.player
@@ -41,5 +62,6 @@ hook.Add('preinit', 'chat_commands', function()
 end)
 
 hook.Add('postinit', 'chat_commands', function(self)
+	nBAM.commandInfo = {}
 	Events:Subscribe("PlayerChat", self, self.chatCMD)
 end)

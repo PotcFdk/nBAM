@@ -40,7 +40,7 @@ local META = {
 	end,
 	__newindex = function (t, key, val)
 		if shortcuts[key] then return end
-		t[key] = val
+		rawset(t, key, val)
 	end
 }
 
