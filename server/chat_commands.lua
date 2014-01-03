@@ -28,40 +28,58 @@ local function errmsg (paramNum, expectedType)
 end
 
 hook.Add('preinit', 'chat_commands', function()
-	function nBAM:RegisterChatCMDInfo (command, usage, description)
+	function nBAM:RegisterChatCMD (command, usage, description, callback, permission_id)
 		assert(self:IsString(command), errmsg(1, 'string'))
 		assert(self:IsString(usage), errmsg(2, 'string'))
 		assert(self:IsString(description), errmsg(3, 'string'))
-		self.commandInfo[command] = {usage = usage, description = description}
+		assert(self:IsFunction(callback), errmsg(4, 'function'))
+		if not self:IsString(permission_id) then permission_id = command end -- default
+		
+		nBAM.commands = nBAM.commands or {}
+		self.commands[command] = {
+			usage = usage,
+			description = description,
+			callback = callback,
+			permission_id = permission_id
+		}
 	end
 	
-	function nBAM:GetCMDs ()
-		return self.commandInfo
+	function nBAM:ExistsChatCMD(command)
+		return self:IsTable(self.commands[command]) and self:IsFunction(self.commands[command].callback)
 	end
 	
-	function nBAM:GetCMDInfo (command)
+	function nBAM:GetChatCMDs ()
+		return self.commands
+	end
+	
+	function nBAM:GetChatCMDInfo (command)
 		assert(self:IsString(command), errmsg(1, 'string'))
-		if not self.commandInfo[command] then return end
-		return self.commandInfo[command].usage, self.commandInfo[command].description
+		if not self.commands[command] then return end
+		return self.commands[command].usage, self.commands[command].description
 	end
 	
-	function nBAM:chatCMD (data)
+	function nBAM:callChatCMD (data)
 		local text   = data.text
 		local player = data.player
 		
 		local cmd = string.match(text, "^[!/.~]([^%s]+)")
-		if cmd then
+		if cmd and nBAM:ExistsChatCMD(cmd) then
 			local params_str = string.sub(text, string.len(cmd)+3)
 			local params = {}
 			for param in string.gmatch(params_str, "[^,]+") do
 				table.insert(params, param)
 			end
-			return hook.Call('chat_command', player, cmd, params_str, unpack(params))
+			
+			local ok, err = pcall(self.commands[cmd].callback, player, cmd, params_str, unpack(params))
+			if not ok then
+				nBAM:PPrint(player, nBAM.Color.red, "There was an error!")
+				nBAM:Log('chat_commands', string.format("Chat command '%s' errored: %s", cmd, err))
+				return
+			end
 		end
 	end
 end)
 
 hook.Add('postinit', 'chat_commands', function(self)
-	nBAM.commandInfo = {}
-	Events:Subscribe("PlayerChat", self, self.chatCMD)
+	Events:Subscribe("PlayerChat", self, self.callChatCMD)
 end)
