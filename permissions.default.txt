@@ -1,6 +1,7 @@
 {
   "permissions": {
     "owner": [
+	  "ban",
       "bring",
       "goto",
       "kick",
@@ -8,6 +9,7 @@
       "lua"
     ],
     "admin": [
+	  "ban",
       "bring",
       "goto",
       "kick",
