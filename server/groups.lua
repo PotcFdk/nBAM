@@ -49,7 +49,7 @@ hook.Add('postinit', 'groups', function (self)
 		steam_id, group = string.match(ln, "^(STEAM_%d:%d:%d+)%s*|%s*([^ ]+)")
 		if steam_id and group then
 			self.groups[steam_id] = group
-			self:Log('groups', "Added user '%s' to group '%s'.", steam_id, group)
+			self:Log('groups', string.format("Added user '%s' to group '%s'.", steam_id, group))
 		end
 	end
 	
