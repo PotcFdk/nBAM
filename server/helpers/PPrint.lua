@@ -35,7 +35,15 @@ hook.Add('preinit', 'PPrint', function ()
 		
 		if not print_string then print_string = "<Empty Value>" end
 		
-		Chat:Send(ply, print_string, color)
+		local first = true
+		for ln in string.gmatch(print_string, "[^\n]+") do
+			if first then
+				Chat:Send(ply, print_string, color)
+				first = false
+			else
+				self:PPrint(ply, color, ln)
+			end
+		end
 	end
 end)
 
