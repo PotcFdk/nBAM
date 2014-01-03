@@ -42,7 +42,7 @@ function hook.Call (hookname, ...)
 		local ok, err = pcall(v, ...)
 		if not ok then
 			hooks[hookname][k] = nil
-			print(string.format("[hook] Module '%s' errored: %s\nUnloaded module '%s'!", hookname, err, hookname))
+			print(string.format("[hook] Module '%s'->'%s' errored: %s\nUnloaded module '%s'!", hookname, k, err, hookname))
 		else
 			if err ~= nil then return err end
 		end
