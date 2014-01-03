@@ -29,8 +29,13 @@ local META = {
 	__index = function(t, key)
 		if shortcuts[key] then
 			return shortcuts[key](caller)
-		else
+		elseif rawget(t, key) ~= nil then
 			return t[key]
+		else
+			local matches = Player.Match(key)
+			if #matches == 1 then
+				return matches[1]
+			end
 		end
 	end
 }
