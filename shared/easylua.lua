@@ -14,7 +14,9 @@
   limitations under the License.
 ]]--
 
-easylua   = {}
+package.loaded.easylua = {}
+local easylua = package.loaded.easylua
+
 easylua.o = {}
 
 local caller
