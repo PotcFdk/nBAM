@@ -1,4 +1,5 @@
 Contributors
 ====
 
-**PotcFdk** - Project Lead
+- **PotcFdk** - Project Lead
+- **Techbot**
