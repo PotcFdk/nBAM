@@ -31,6 +31,29 @@ hook.Add('preinit', 'groups', function ()
 		assert(self:IsSteamId(player), 'Parameter #1 is not a Player entity or a SteamId!')
 		return self.groups[tostring(player)] or default_group
 	end
+	
+	function nBAM:SetGroup (player, group)
+		if self:IsPlayer(player) then
+			player = player:GetSteamId()
+		elseif self:IsString(player) then
+			player = SteamId(player)
+		end
+		assert(self:IsSteamId(player), 'Parameter #1 is not a Player entity or a SteamId!')
+		assert(self:IsString(group), 'Parameter #2 is not a valid groupname!')
+		self.groups[tostring(player)] = group
+		self:Log('groups', string.format("Added user '%s' to group '%s'.", tostring(player), group))
+		Events:Fire("nBAM_UpdateGroup", {player = tostring(player), group = group})
+	end
+	
+	function nBAM:FireUpdateGroup (player)
+		if self:IsPlayer(player) then
+			player = player:GetSteamId()
+		elseif self:IsString(player) then
+			player = SteamId(player)
+		end
+		assert(self:IsSteamId(player), 'Parameter #1 is not a Player entity or a SteamId!')
+		Events:Fire("nBAM_UpdateGroup", {player = tostring(player), group = self:GetGroup(player)})
+	end
 end)
 
 hook.Add('postinit', 'groups', function (self)
@@ -50,10 +73,21 @@ hook.Add('postinit', 'groups', function (self)
 	for ln in fh:lines() do
 		steam_id, group = string.match(ln, "^(STEAM_%d:%d:%d+)%s*|%s*([^ ]+)")
 		if steam_id and group then
-			self.groups[steam_id] = group
-			self:Log('groups', string.format("Added user '%s' to group '%s'.", steam_id, group))
+			nBAM:SetGroup(steam_id, group)
 		end
 	end
 	
 	fh:close()
+	
+	-----
+	
+	function _G.Player:GetGroup()
+		return nBAM:GetGroup(self)
+	end
+	
+	function _G.Player:SetGroup(group)
+		return nBAM:GetGroup(self, group)
+	end
+	
+	Events:Subscribe("nBAM_RequestUpdateGroup", nBAM, nBAM.FireUpdateGroup)
 end)
