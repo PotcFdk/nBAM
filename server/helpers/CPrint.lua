@@ -15,6 +15,7 @@
 ]]--
 
 local hook = require 'nbamHook'
+local timer = require 'nbamTimer'
 
 hook.Add('preinit', 'CPrint', function ()
 	function nBAM:CPrint (c, ...)
@@ -36,7 +37,7 @@ hook.Add('preinit', 'CPrint', function ()
 		local first = true
 		for ln in string.gmatch(print_string, "[^\n]+") do
 			if first then
-				Chat:Broadcast(ln, color)
+				timer.Simple(0,function() Chat:Broadcast(ln, color) end)
 				first = false
 			else
 				self:CPrint(color, ln)
