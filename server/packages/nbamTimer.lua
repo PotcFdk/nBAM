@@ -44,7 +44,7 @@ end
 function timer.Simple (delay, callback)
 	assert(isnumber(delay), errmsg(1, 'number'))
 	assert(isfunction(callback), errmsg(2, 'function'))
-	timer.Create('timersimple@'..time()..'+'..delay..':'..tostring(callback), delay, 1, callback)
+	table.insert(timers, { delay = delay, last = time(), count = 1, callback = callback })
 end
 
 function timer.Think ()
