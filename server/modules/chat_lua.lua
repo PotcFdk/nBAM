@@ -16,6 +16,7 @@
 
 local Tag = 'lua'
 
+local easylua = require 'easylua'
 local hook = require 'nbamHook'
 
 local info = {
