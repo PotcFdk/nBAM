@@ -37,6 +37,12 @@ hook.Add('postinit', Tag, function()
 			return false
 		end
 		
-		player:Teleport(targets[1]:GetPosition(),targets[1]:GetAngle())
+		if player:InVehicle() then
+			player:GetVehicle():Teleport(targets[1]:GetPosition(),targets[1]:GetAngle())
+	 	elseif targets[1]:InVehicle() then
+	 		player:EnterVehicle(targets[1]:GetVehicle(),1)
+		else
+			player:Teleport(targets[1]:GetPosition(),targets[1]:GetAngle())
+		end
 	end)
 end)
