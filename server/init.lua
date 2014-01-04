@@ -23,7 +23,7 @@ function nBAM:__init() end
 local function postload ()
 	hook.Run('preinit')
 	nBAM = nBAM()
-	hook.Run('postinit', nBAM)
+	hook.Run('postinit')
 end
  
 Events:Subscribe("ModuleLoad", postload)

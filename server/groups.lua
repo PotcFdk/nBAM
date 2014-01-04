@@ -14,6 +14,9 @@
   limitations under the License.
 ]]--
 
+NBAM_UPDATEGROUP = "nBAM_UpdateGroup"
+NBAM_REQ_UPDATEGROUP = "nBAM_RequestUpdateGroup"
+
 local hook = require 'nbamHook'
 
 local default_group = 'player'
@@ -22,6 +25,30 @@ local fn		 = 'groups.txt'
 local fn_default = 'groups.default.txt'
 
 hook.Add('preinit', 'groups', function ()
+	function nBAM:LoadGroups ()
+		self.groups = {}
+		
+		local fh = io.open(fn, 'r')
+
+		if not fh then
+			self:Log('groups', string.format("Could not find '%s', loading default group file...", fn))
+			fh = io.open(fn_default, 'r')
+			if not fh then
+				self:Log('groups', 'Error: Could not open group lists!')
+				return
+			end
+		end
+		
+		for ln in fh:lines() do
+			steam_id, group = string.match(ln, "^(STEAM_%d:%d:%d+)%s*|%s*([^ ]+)")
+			if steam_id and group then
+				self:SetGroup(steam_id, group)
+			end
+		end
+		
+		fh:close()
+	end
+	
 	function nBAM:GetGroup (player)
 		if self:IsPlayer(player) then
 			player = player:GetSteamId()
@@ -42,7 +69,7 @@ hook.Add('preinit', 'groups', function ()
 		assert(self:IsString(group), 'Parameter #2 is not a valid groupname!')
 		self.groups[tostring(player)] = group
 		self:Log('groups', string.format("Added user '%s' to group '%s'.", tostring(player), group))
-		Events:Fire("nBAM_UpdateGroup", {player = tostring(player), group = group})
+		Events:Fire(NBAM_UPDATEGROUP, {player = tostring(player), group = group})
 	end
 	
 	function nBAM:FireUpdateGroup (player)
@@ -52,42 +79,26 @@ hook.Add('preinit', 'groups', function ()
 			player = SteamId(player)
 		end
 		assert(self:IsSteamId(player), 'Parameter #1 is not a Player entity or a SteamId!')
-		Events:Fire("nBAM_UpdateGroup", {player = tostring(player), group = self:GetGroup(player)})
+		Events:Fire(NBAM_UPDATEGROUP, {player = tostring(player), group = self:GetGroup(player)})
 	end
 end)
 
-hook.Add('postinit', 'groups', function (self)
-	self.groups = {}
+hook.Add('postinit', 'groups', function ()
+	-- Init
 	
-	local fh = io.open(fn, 'r')
-
-	if not fh then
-		nBAM:Log('groups', string.format("Could not find '%s', loading default group file...", fn))
-		fh = io.open(fn_default, 'r')
-		if not fh then
-			nBAM:Log('groups', 'Error: Could not open group lists!')
-			return
-		end
-	end
+	nBAM:LoadGroups()
 	
-	for ln in fh:lines() do
-		steam_id, group = string.match(ln, "^(STEAM_%d:%d:%d+)%s*|%s*([^ ]+)")
-		if steam_id and group then
-			nBAM:SetGroup(steam_id, group)
-		end
-	end
+	-- Hook Events
 	
-	fh:close()
+	Events:Subscribe(NBAM_REQ_UPDATEGROUP, nBAM, nBAM.FireUpdateGroup)
 	
-	-----
+	-- Interface
 	
-	function _G.Player:GetGroup()
+	function _G.Player:GetGroup ()
 		return nBAM:GetGroup(self)
 	end
 	
-	function _G.Player:SetGroup(group)
+	function _G.Player:SetGroup (group)
 		return nBAM:GetGroup(self, group)
 	end
-	
-	Events:Subscribe("nBAM_RequestUpdateGroup", nBAM, nBAM.FireUpdateGroup)
 end)

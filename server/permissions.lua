@@ -26,6 +26,31 @@ local function errmsg (paramNum, expectedType)
 end
 
 hook.Add('preinit', 'permissions', function ()
+	function nBAM:LoadPermissions ()
+		local fh = io.open(fn, 'r')
+
+		if not fh then
+			self:Log('permissions', string.format("Could not find '%s', loading default permissions file...", fn))
+			fh = io.open(fn_default, 'r')
+			if not fh then
+				self:Log('permissions', 'Error: Could not open admin lists!')
+				return
+			end
+		end
+		
+		local data = fh:read("*all")
+		fh:close()
+		
+		data = json.decode(data)
+		
+		if not self:IsTable(data) then
+			self:Log('permissions', 'Error in json file!')
+			return
+		end
+		
+		self.permissions = data.permissions or {}
+	end
+	
 	function nBAM:HasPermission (what, module)
 		assert(self:IsString(what) or self:IsPlayer(what) or self:IsSteamId(), errmsg(1, 'string, player or steamid'))
 		assert(self:IsString(module), errmsg(2, 'string'))
@@ -48,29 +73,6 @@ hook.Add('preinit', 'permissions', function ()
 	end
 end)
 
-hook.Add('postinit', 'permissions', function (self)
-	self.permissions = {}
-	
-	local fh = io.open(fn, 'r')
-
-	if not fh then
-		nBAM:Log('permissions', string.format("Could not find '%s', loading default permissions file...", fn))
-		fh = io.open(fn_default, 'r')
-		if not fh then
-			nBAM:Log('permissions', 'Error: Could not open admin lists!')
-			return
-		end
-	end
-	
-	local data = fh:read("*all")
-	fh:close()
-	
-	data = json.decode(data)
-	
-	if not nBAM:IsTable(data) then
-		nBAM:Log('permissions', 'Error in json file!')
-		return
-	end
-	
-	self.permissions = data.permissions or {}
+hook.Add('postinit', 'permissions', function ()
+	nBAM:LoadPermissions()
 end)

@@ -80,6 +80,6 @@ hook.Add('preinit', 'chat_commands', function()
 	end
 end)
 
-hook.Add('postinit', 'chat_commands', function(self)
-	Events:Subscribe("PlayerChat", self, self.callChatCMD)
+hook.Add('postinit', 'chat_commands', function ()
+	Events:Subscribe("PlayerChat", nBAM, nBAM.callChatCMD)
 end)
