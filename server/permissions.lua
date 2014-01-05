@@ -14,6 +14,9 @@
   limitations under the License.
 ]]--
 
+NBAM_UPDATEPERMISSION = "nBAM_UpdatePermission"
+NBAM_REQ_UPDATEPERMISSION = "nBAM_RequestUpdatePermission"
+
 local hook = require 'nbamHook'
 local json = require 'dkjson'
 
@@ -71,10 +74,34 @@ hook.Add('preinit', 'permissions', function ()
 		
 		return false
 	end
+	
+	function nBAM:FireUpdatePermission (data)
+		local player, permission = data.player, data.permission
+		if self:IsPlayer(player) then
+			player = player:GetSteamId()
+		elseif self:IsString(player) then
+			player = SteamId(player)
+		end
+		assert(self:IsSteamId(player), "Parameter 'player' is not a Player entity or a SteamId!")
+		assert(self:IsString(permission), "Parameter 'permission' is not a string!")
+		Events:Fire(NBAM_UPDATEPERMISSION, {
+			player = tostring(player),
+			permission = permission, 
+			has_permission = nBAM:HasPermission(player, permission)
+		})
+	end
 end)
 
 hook.Add('postinit', 'permissions', function ()
+	-- Init
+	
 	nBAM:LoadPermissions()
+	
+	-- Hook Events
+	
+	Events:Subscribe(NBAM_REQ_UPDATEPERMISSION, nBAM, nBAM.FireUpdatePermission)
+	
+	-- Interface
 	
 	function _G.Player:HasPermission (permission)
 		return nBAM:HasPermission(self, permission)
