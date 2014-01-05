@@ -47,7 +47,10 @@ cprint = function (c, ...)
 	Chat:Print(print_string, color)
 end
 
-Network:Subscribe("nBAM_runlua", function (script)
+Network:Subscribe("nBAM_runlua", function (data)
+	local player = data.player
+	local script = data.script
+	
 	script = load(script)
 	
 	easylua.Start(LocalPlayer)
@@ -56,5 +59,6 @@ Network:Subscribe("nBAM_runlua", function (script)
 	
 	if not ok then
 		cprint(Color(255, 190, 190), err)
+		Network:Send("nBAM_LuaError_CL", {source_player = player, error = err})
 	end
 end)
