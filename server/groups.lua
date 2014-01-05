@@ -69,7 +69,10 @@ hook.Add('preinit', 'groups', function ()
 		assert(self:IsString(group), 'Parameter #2 is not a valid groupname!')
 		self.groups[tostring(player)] = group
 		self:Log('groups', string.format("Added user '%s' to group '%s'.", tostring(player), group))
-		Events:Fire(NBAM_UPDATEGROUP, {player = tostring(player), group = group})
+		Events:Fire(NBAM_UPDATEGROUP, {
+			player = tostring(player),
+			group = group
+		})
 	end
 	
 	function nBAM:FireUpdateGroup (player)
@@ -79,7 +82,10 @@ hook.Add('preinit', 'groups', function ()
 			player = SteamId(player)
 		end
 		assert(self:IsSteamId(player), 'Parameter #1 is not a Player entity or a SteamId!')
-		Events:Fire(NBAM_UPDATEGROUP, {player = tostring(player), group = self:GetGroup(player)})
+		Events:Fire(NBAM_UPDATEGROUP, {
+			player = tostring(player),
+			group = self:GetGroup(player)
+		})
 	end
 end)
 
