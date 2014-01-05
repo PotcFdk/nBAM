@@ -50,12 +50,15 @@ end
 Network:Subscribe("nBAM_runlua", function (data)
 	local player = data.player
 	local script = data.script
+	local source = tostring(player)
 	
 	script = load(script)
 	
-	easylua.Start(LocalPlayer)
+	-- TODO: Streaming env values from server?
+	
+	local _ENV = easylua.GetEnv(LocalPlayer)
+	script = load(script, source, nil, _ENV)
 	local ok, err = pcall(script)
-	easylua.End()
 	
 	if not ok then
 		cprint(Color(255, 190, 190), err)

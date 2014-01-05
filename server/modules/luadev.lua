@@ -32,15 +32,15 @@ hook.Add('preinit', Tag, function ()
 	function nBAM:RunLua_SV (data, pl)
 		local player = pl or data.player
 		local script = data.script
+		local source = tostring(player)
+		
 		if not self:HasPermission(player, Tag) then return end
 		
 		self:Log(Tag, string.format("(SV) Running script by '%s'...", tostring(player)))
 		
-		script = load(script)
-		
-		easylua.Start(player)
+		local _ENV = easylua.GetEnv(player)
+		script = load(script, source, nil, _ENV)
 		local ok, err = pcall(script)
-		easylua.End()
 		
 		if not ok then
 			self:OnLuaError_SV (player, err, data.error_to_chat)
@@ -66,7 +66,10 @@ hook.Add('preinit', Tag, function ()
 	
 	-- OnLuaError
 	
-	function nBAM:OnLuaError_SV (player, err)
+	function nBAM:OnLuaError_SV (player, err, error_to_chat)
+		if error_to_chat then
+			cprint(nBAM.Color.lred, err)
+		end
 		hook.Run(NBAM_LUA_ERROR_SV, player, err)
 	end
 	
@@ -87,10 +90,7 @@ hook.Add('postinit', Tag, function ()
 	Network:Subscribe(NBAM_LUA_ERROR_CL, nBAM, nBAM.OnLuaError_CL)
 end)
 
-hook.Add(NBAM_LUA_ERROR_SV, Tag, function (player, err, error_to_chat)
-	if error_to_chat then
-		cprint(nBAM.Color.lred, err)
-	end
+hook.Add(NBAM_LUA_ERROR_SV, Tag, function (player, err)
 	Events:Fire(NBAM_LUA_ERROR_SV, {player = player, error = err})
 end)
 

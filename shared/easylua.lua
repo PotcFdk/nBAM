@@ -33,37 +33,35 @@ local shortcuts = {
 	vehicle = function(ply) return ply:GetVehicle() end
 }
 
-local META = {
-	__index = function (t, key)
-		if shortcuts[key] then
-			return shortcuts[key](caller)
-		elseif rawget(t, key) ~= nil then
-			return t[key]
-		else
-			local matches = Player.Match(key)
-			if #matches == 1 then
-				return matches[1]
-			end
+local function META (ply)
+	local values = {}
+	for k, v in next, shortcuts do
+		local ok, ret = pcall(v, ply)
+		if ok then
+			values[k] = ret
 		end
-	end,
-	__newindex = function (t, key, val)
-		if shortcuts[key] then return end
-		rawset(t, key, val)
-	end
-}
-
-function easylua.Start(ply)
-	if caller ~= nil then
-		print("[easylua] !! RESTARTING INCOMPLETE SESSION FOR ",ply)
-		easylua.End()
 	end
 	
-	caller = ply
-	easylua.o = _G
-	_G = setmetatable(_G, META)
+	return {
+		__index = function (t, key)
+			if values[key] then
+				return values[key]
+			elseif rawget(t, key) ~= nil then
+				return t[key]
+			else
+				local matches = Player.Match(key)
+				if #matches == 1 then
+					return matches[1]
+				end
+			end
+		end,
+		__newindex = function (t, key, val)
+			if shortcuts[key] then return end
+			rawset(t, key, val)
+		end
+	}
 end
 
-function easylua.End()
-	_G = easylua.o
-	caller = nil
+function easylua.GetEnv(ply)
+	return setmetatable(_G, META(ply))
 end
