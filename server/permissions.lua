@@ -75,4 +75,8 @@ end)
 
 hook.Add('postinit', 'permissions', function ()
 	nBAM:LoadPermissions()
+	
+	function _G.Player:HasPermission (permission)
+		return nBAM:HasPermission(self, permission)
+	end
 end)
