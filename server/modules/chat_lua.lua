@@ -14,7 +14,7 @@
   limitations under the License.
 ]]--
 
-local Tag = 'lua'
+local Tag = 'chat_lua'
 
 local easylua = require 'easylua'
 local hook = require 'nbamHook'
@@ -30,43 +30,22 @@ local info = {
 
 hook.Add('postinit', Tag, function()
 	nBAM:RegisterChatCMD('l', info.l.u, info.l.d, function (player, cmd, script)
-		if not nBAM:HasPermission(player, Tag) then return end
-		
-		script = load(script)
-		
-		easylua.Start(player)
-		local ok, err = pcall(script)
-		easylua.End()
-		
-		if not ok then
-			cprint(nBAM.Color.lred, err)
-		end
+		Events:Fire(NBAM_RUNLUA_SV, {player = player, script = script})
 	end, Tag)
 
 
 	nBAM:RegisterChatCMD('lc', info.lc.u, info.lc.d, function (player, cmd, script)
-		if not nBAM:HasPermission(player, Tag) then return end
-		Network:Broadcast("nBAM_runlua", script)
+		Events:Fire(NBAM_RUNLUA_CL, {player = player, script = script})
 	end, Tag)
 
 	nBAM:RegisterChatCMD('lm', info.lm.u, info.lm.d, function (player, cmd, script)
-		if not nBAM:HasPermission(player, Tag) then return end
-		Network:Send(player, "nBAM_runlua", script)
+		Events:Fire(NBAM_RUNLUA_SELF, {player = player, script = script})
 	end, Tag)
 
 	-- print functions
 
 	nBAM:RegisterChatCMD('print', info.print.u, info.print.d, function (player, cmd, script)
-		if not nBAM:HasPermission(player, Tag) then return end
-		
-		script = load('cprint('..script..')')
-		
-		easylua.Start(player)
-		local ok, err = pcall(script)
-		easylua.End()
-		
-		if not ok then
-			cprint(nBAM.Color.lred, err)
-		end
+		script = 'cprint('..script..')'
+		Events:Fire(NBAM_RUNLUA_SV, {player = player, script = script})
 	end, Tag)
 end)
