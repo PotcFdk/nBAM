@@ -14,6 +14,11 @@
   limitations under the License.
 ]]--
 
+-- clientside hacks
+	package = package or {}
+	package.loaded = package.loaded or {}
+-- / clientside hacks
+
 package.loaded.easylua = {}
 local easylua = package.loaded.easylua
 

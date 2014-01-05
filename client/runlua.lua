@@ -14,6 +14,14 @@
   limitations under the License.
 ]]--
 
+-- hack
+	require = require or function (name)
+		return package.loaded[name]
+	end
+-- / hack
+
+local easylua = require 'easylua'
+
 local function iscolor (col)
 	return type(col) == 'userdata' and type(col.r) == 'number'
 		and type(col.g) == 'number' and type(col.b) == 'number'
