@@ -55,7 +55,7 @@ hook.Add('preinit', 'permissions', function ()
 	end
 	
 	function nBAM:HasPermission (what, module)
-		assert(self:IsString(what) or self:IsPlayer(what) or self:IsSteamId(), errmsg(1, 'string, player or steamid'))
+		assert(self:IsString(what) or self:IsPlayer(what) or self:IsSteamId(what), errmsg(1, 'string, player or steamid'))
 		assert(self:IsString(module), errmsg(2, 'string'))
 		
 		local group
