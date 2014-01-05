@@ -43,7 +43,7 @@ hook.Add('preinit', Tag, function ()
 		easylua.End()
 		
 		if not ok then
-			self:OnLuaError_SV (player, err)
+			self:OnLuaError_SV (player, err, data.error_to_chat)
 		end
 	end
 	
@@ -87,8 +87,10 @@ hook.Add('postinit', Tag, function ()
 	Network:Subscribe(NBAM_LUA_ERROR_CL, nBAM, nBAM.OnLuaError_CL)
 end)
 
-hook.Add(NBAM_LUA_ERROR_SV, Tag, function (player, err)
-	cprint(nBAM.Color.lred, err)
+hook.Add(NBAM_LUA_ERROR_SV, Tag, function (player, err, error_to_chat)
+	if error_to_chat then
+		cprint(nBAM.Color.lred, err)
+	end
 	Events:Fire(NBAM_LUA_ERROR_SV, {player = player, error = err})
 end)
 

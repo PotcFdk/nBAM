@@ -30,9 +30,8 @@ local info = {
 
 hook.Add('postinit', Tag, function()
 	nBAM:RegisterChatCMD('l', info.l.u, info.l.d, function (player, cmd, script)
-		Events:Fire(NBAM_RUNLUA_SV, {player = player, script = script})
+		Events:Fire(NBAM_RUNLUA_SV, {player = player, script = script, error_to_chat = true})
 	end, Tag)
-
 
 	nBAM:RegisterChatCMD('lc', info.lc.u, info.lc.d, function (player, cmd, script)
 		Events:Fire(NBAM_RUNLUA_CL, {player = player, script = script})
