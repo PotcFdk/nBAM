@@ -29,7 +29,8 @@ local caller
 local shortcuts = {
 	me = function(ply) return ply end,
 	there = function(ply) return ply:GetAimTarget().position end,
-	this = function(ply) return ply:GetAimTarget().player or ply:GetAimTarget().vehicle end
+	this = function(ply) return ply:GetAimTarget().player or ply:GetAimTarget().vehicle end,
+	vehicle = function(ply) return ply:GetVehicle() end
 }
 
 local META = {
