@@ -27,12 +27,10 @@ local function addHelpEntry()
 	Events:Fire( "HelpAddItem",
 		{
 			name = "nBAM",
-			text =
-			[[nBAM - the 'non-Bullshit-Admin-Mod' is a WIP Adminmod.
-
-			Here is a list of commands:
-			(This following list is auto-generated and only shows commands that you have access to!)]]
-			.. '\n\n' .. appendix
+			text = "nBAM - the 'non-Bullshit-Admin-Mod'.\n\n"
+				.. "Here is a list of commands:\n"
+				.. "(The following list is auto-generated and only shows commands that you have access to!)\n\n"
+				.. appendix
 		} )
 end
 
