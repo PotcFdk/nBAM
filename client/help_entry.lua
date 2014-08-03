@@ -34,10 +34,12 @@ local function addHelpEntry()
 		} )
 end
 
-Events:Subscribe("ModuleLoad", function ()
+local function ModuleLoad()
 	loadedHelp = true
 	addHelpEntry()
-end)
+end
+Events:Subscribe("ModuleLoad", ModuleLoad)
+Events:Subscribe("ModulesLoad", ModuleLoad)
 
 Network:Subscribe("nBAM_helpEntry", function (txt)
 	appendix = txt
