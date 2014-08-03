@@ -35,6 +35,14 @@ function hook.Add (hookname, id, callback)
 	hooks[hookname][id] = callback
 end
 
+function hook.Remove (hookname, id)
+	assert(isstring(hookname), errmsg(1, 'string'))
+	assert(isstring(id), errmsg(2, 'string'))
+	if istable(hooks[hookname]) then
+		hooks[hookname][id] = nil
+	end
+end
+
 function hook.Call (hookname, ...)
 	assert(isstring(hookname), errmsg(1, 'string'))
 	if not istable(hooks[hookname]) then return end
