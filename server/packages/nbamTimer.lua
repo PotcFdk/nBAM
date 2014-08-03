@@ -41,6 +41,12 @@ function timer.Create (id, delay, count, callback)
 	timers[id] = { delay = delay, last = time(), count = count, callback = callback }
 end
 
+function timer.Destroy (id)
+	assert(isstring(id), errmsg(1, 'string'))
+	timers[id] = nil
+end
+timer.Remove = timer.Destroy
+
 function timer.Simple (delay, callback)
 	assert(isnumber(delay), errmsg(1, 'number'))
 	assert(isfunction(callback), errmsg(2, 'function'))
