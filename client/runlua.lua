@@ -52,8 +52,6 @@ Network:Subscribe("nBAM_runlua", function (data)
 	local script = data.script
 	local source = tostring(player)
 	
-	script = load(script)
-	
 	-- TODO: Streaming env values from server?
 	
 	local _ENV = easylua.GetEnv(LocalPlayer)
