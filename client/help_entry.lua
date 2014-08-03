@@ -15,14 +15,13 @@
 ]]--
 
 
-local loadedHelp = false
 local loadedNet = false
 
 local appendix
 
 local function addHelpEntry()
-	-- Not sure what arrives first; this will make sure that everything is there when we need it.
-	if not loadedHelp or not loadedNet then return end
+	-- Not sure what arrives first; this will make sure that the content is there when we need it.
+	if not loadedNet then return end
 	
 	Events:Fire( "HelpAddItem",
 		{
@@ -34,12 +33,8 @@ local function addHelpEntry()
 		} )
 end
 
-local function ModuleLoad()
-	loadedHelp = true
-	addHelpEntry()
-end
-Events:Subscribe("ModuleLoad", ModuleLoad)
-Events:Subscribe("ModulesLoad", ModuleLoad)
+Events:Subscribe("ModuleLoad", addHelpEntry)
+Events:Subscribe("ModulesLoad", addHelpEntry)
 
 Network:Subscribe("nBAM_helpEntry", function (txt)
 	appendix = txt
